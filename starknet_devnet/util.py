@@ -27,7 +27,7 @@ def validate_hex_string(arg: str) -> int:
 
     raise StarknetDevnetException(
         code=StarkErrorCode.MALFORMED_REQUEST,
-        message=f"Block hash should be a hexadecimal string starting with 0x, or 'null'; got: '{arg}'.",
+        message=f"Hash should be a hexadecimal string starting with 0x, or 'null'; got: '{arg}'.",
     )
 
 def fixed_length_hex(arg: int) -> str:
