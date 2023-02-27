@@ -25,7 +25,11 @@ from werkzeug.datastructures import MultiDict
 
 from starknet_devnet.blueprints.rpc.structures.types import BlockId
 from starknet_devnet.state import state
-from starknet_devnet.util import StarknetDevnetException, validate_hex_string, fixed_length_hex
+from starknet_devnet.util import (
+    StarknetDevnetException,
+    fixed_length_hex,
+    validate_hex_string,
+)
 
 feeder_gateway = Blueprint("feeder_gateway", __name__, url_prefix="/feeder_gateway")
 

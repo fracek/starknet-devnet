@@ -9,14 +9,13 @@ from typing import Dict, List, Set, Union
 
 from starkware.starknet.business_logic.state.state import CachedState
 from starkware.starknet.definitions.error_codes import StarknetErrorCode
-from starkware.starkware_utils.error_handling import StarkErrorCode
 from starkware.starknet.services.api.feeder_gateway.response_objects import (
     DeployedContract,
     FeeEstimationInfo,
     StorageEntry,
 )
 from starkware.starknet.testing.contract import StarknetContract
-from starkware.starkware_utils.error_handling import StarkException
+from starkware.starkware_utils.error_handling import StarkErrorCode, StarkException
 
 
 def validate_hex_string(arg: str) -> int:
