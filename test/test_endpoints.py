@@ -26,6 +26,9 @@ INVOKE_CONTENT = load_file_content("invoke.json")
 CALL_CONTENT = load_file_content("call.json")
 INVALID_HASH = "0x58d4d4ed7580a7a98ab608883ec9fe722424ce52c19f2f369eeea301f535914"
 INVALID_ADDRESS = "0x123"
+INVALID_HASH_MESSAGE = (
+    "Transaction hash should be a hexadecimal string starting with 0x, or 'null';"
+)
 
 
 def send_transaction(req_dict: dict):
@@ -167,6 +170,13 @@ def get_transaction_trace(transaction_hash: str):
     )
 
 
+def get_transaction(transaction_hash: str):
+    """Get transaction from request dict"""
+    return requests.get(
+        f"{APP_URL}/feeder_gateway/get_transaction?transactionHash={transaction_hash}"
+    )
+
+
 def get_full_contract(contract_adress):
     """Get full contract class of a contract at a specific address"""
     return requests.get(
@@ -197,11 +207,16 @@ def get_state_update(block_hash, block_number):
 
 def get_transaction_status(tx_hash):
     """Get transaction status"""
-    response = requests.get(
+    return requests.get(
         f"{APP_URL}/feeder_gateway/get_transaction_status?transactionHash={tx_hash}"
     )
-    assert response.status_code == 200
-    return response.json()
+
+
+def get_transaction_receipt(tx_hash):
+    """Get transaction receipt"""
+    return requests.get(
+        f"{APP_URL}/feeder_gateway/get_transaction_receipt?transactionHash={tx_hash}"
+    )
 
 
 @pytest.mark.deploy
@@ -248,7 +263,9 @@ def test_error_response_call_with_block_hash_0():
 
     json_error_message = resp.json()["message"]
     assert resp.status_code == 500
-    assert json_error_message.startswith("Block hash should be a hexadecimal string starting with 0x, or 'null';")
+    assert json_error_message.startswith(
+        "Block hash should be a hexadecimal string starting with 0x, or 'null';"
+    )
 
 
 @pytest.mark.call
@@ -349,12 +366,18 @@ def test_get_transaction_status():
     assert response.status_code == 200
     tx_hash = response.json().get("tx_hash")
 
-    json_response = get_transaction_status(tx_hash)
+    response = get_transaction_status(tx_hash)
+    assert response.status_code == 200
+    json_response = response.json()
+
     assert_valid_schema(json_response, "get_transaction_status.json")
     assert json_response.get("tx_status") == "ACCEPTED_ON_L2"
 
     invalid_tx_hash = "0x443a8b3ec1f9e0c64"
-    json_response = get_transaction_status(invalid_tx_hash)
+    response = get_transaction_status(invalid_tx_hash)
+    assert response.status_code == 200
+    json_response = response.json()
+
     assert_valid_schema(json_response, "get_transaction_status.json")
     assert json_response.get("tx_status") == "NOT_RECEIVED"
 
@@ -366,4 +389,40 @@ def test_get_transaction_trace_of_rejected():
     resp = get_transaction_trace(deploy_info["tx_hash"])
     resp_body = resp.json()
     assert resp_body["code"] == str(StarknetErrorCode.NO_TRACE)
+    assert resp.status_code == 500
+
+
+@devnet_in_background()
+def test_get_transaction_with_tx_hash_0():
+    """Send a failing tx and assert its trace"""
+    resp = get_transaction("0")
+    resp_body = resp.json()
+    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp.status_code == 500
+
+
+@devnet_in_background()
+def test_get_transaction_status_with_tx_hash_0():
+    """Send a failing tx and assert its trace"""
+    resp = get_transaction_status("0")
+    resp_body = resp.json()
+    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp.status_code == 500
+
+
+@devnet_in_background()
+def test_get_transaction_trace_with_tx_hash_0():
+    """Send a failing tx and assert its trace"""
+    resp = get_transaction_trace("0")
+    resp_body = resp.json()
+    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp.status_code == 500
+
+
+@devnet_in_background()
+def test_get_transaction_receipt_with_tx_hash_0():
+    """Send a failing tx and assert its trace"""
+    resp = get_transaction_receipt("0")
+    resp_body = resp.json()
+    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
     assert resp.status_code == 500
