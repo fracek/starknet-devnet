@@ -102,7 +102,9 @@ def test_wrong_mint_address_format():
     print(resp)
 
     assert resp.status_code == 500
-    assert resp.json["message"].startswith("Hash should be a hexadecimal string starting with 0x, or 'null';")
+    assert resp.json["message"].startswith(
+        "Hash should be a hexadecimal string starting with 0x, or 'null';"
+    )
 
 
 def test_missing_mint_address():

@@ -30,6 +30,7 @@ def validate_hex_string(arg: str) -> int:
         message=f"Hash should be a hexadecimal string starting with 0x, or 'null'; got: '{arg}'.",
     )
 
+
 def fixed_length_hex(arg: int) -> str:
     """
     Converts the int input to a hex output of fixed length
