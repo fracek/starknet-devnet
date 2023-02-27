@@ -26,7 +26,7 @@ INVOKE_CONTENT = load_file_content("invoke.json")
 CALL_CONTENT = load_file_content("call.json")
 INVALID_HASH = "0x58d4d4ed7580a7a98ab608883ec9fe722424ce52c19f2f369eeea301f535914"
 INVALID_ADDRESS = "0x123"
-INVALID_HASH_MESSAGE = (
+INVALID_TRANSACTION_HASH_MESSAGE = (
     "Transaction hash should be a hexadecimal string starting with 0x, or 'null';"
 )
 
@@ -258,7 +258,7 @@ def test_error_response_call_with_negative_block_number():
 @pytest.mark.call
 @devnet_in_background()
 def test_error_response_call_with_block_hash_0():
-    """Call with block hash 0 without 0x prefix should fail"""
+    """Should fail on call with block hash 0 without 0x prefix"""
     resp = get_block_by_hash({"blockHash": 0})
 
     json_error_message = resp.json()["message"]
@@ -396,35 +396,35 @@ def test_get_transaction_trace_of_rejected():
 
 @devnet_in_background()
 def test_get_transaction_with_tx_hash_0():
-    """Send a failing tx and assert its trace"""
+    """Should fail on get_transaction with hash 0 without 0x prefix"""
     resp = get_transaction("0")
     resp_body = resp.json()
-    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp_body["message"].startswith(INVALID_TRANSACTION_HASH_MESSAGE)
     assert resp.status_code == 500
 
 
 @devnet_in_background()
 def test_get_transaction_status_with_tx_hash_0():
-    """Send a failing tx and assert its trace"""
+    """Should fail on get_transaction_status with hash 0 without 0x prefix"""
     resp = get_transaction_status("0")
     resp_body = resp.json()
-    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp_body["message"].startswith(INVALID_TRANSACTION_HASH_MESSAGE)
     assert resp.status_code == 500
 
 
 @devnet_in_background()
 def test_get_transaction_trace_with_tx_hash_0():
-    """Send a failing tx and assert its trace"""
+    """Should fail on get_transaction_trace with hash 0 without 0x prefix"""
     resp = get_transaction_trace("0")
     resp_body = resp.json()
-    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp_body["message"].startswith(INVALID_TRANSACTION_HASH_MESSAGE)
     assert resp.status_code == 500
 
 
 @devnet_in_background()
 def test_get_transaction_receipt_with_tx_hash_0():
-    """Send a failing tx and assert its trace"""
+    """Should fail on get_transaction_receipt with hash 0 without 0x prefix"""
     resp = get_transaction_receipt("0")
     resp_body = resp.json()
-    assert resp_body["message"].startswith(INVALID_HASH_MESSAGE)
+    assert resp_body["message"].startswith(INVALID_TRANSACTION_HASH_MESSAGE)
     assert resp.status_code == 500

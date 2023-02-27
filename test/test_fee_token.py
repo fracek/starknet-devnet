@@ -99,7 +99,6 @@ def test_missing_mint_amount():
 def test_wrong_mint_address_format():
     """Assert failure if mint address of wrong format"""
     resp = mint_client({"amount": 10, "address": "invalid_address"})
-    print(resp)
 
     assert resp.status_code == 500
     assert resp.json["message"].startswith(
