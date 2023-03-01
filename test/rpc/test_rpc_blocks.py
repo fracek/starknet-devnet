@@ -129,7 +129,7 @@ def test_get_block_with_txs_raises_on_incorrect_block_id(block_id):
 
 
 @pytest.mark.usefixtures("run_devnet_in_background", "deploy_info", "gateway_block")
-    "run_devnet_in_background",
+@pytest.mark.parametrize("run_devnet_in_background",
     [
         ["--disable-rpc-request-validation", "--disable-rpc-response-validation"],
     ],
